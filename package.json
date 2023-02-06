@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "concurrently": "^7.6.0",
+    "create-react-app": "^5.0.1"
+  },
+  "scripts": {
+    "client": "npm start --prefix client",
+    "server": "npm run server --prefix server",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  }
+}
