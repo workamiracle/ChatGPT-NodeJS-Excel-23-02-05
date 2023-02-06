@@ -18,14 +18,20 @@ function App() {
             <tbody>
               <tr>
                 <td>Porject1(Google Doc)</td>
-                <td>Rename</td>
-                <td>Delete</td>
+                <td>
+                  <button className="btn btn-info btn-sm">Rename</button>
+                </td>
+                <td>
+                  <button className="btn btn-danger btn-sm">Delete</button>
+                </td>
               </tr>
             </tbody>
           </table>
         </div>
         <div className="Task-panel mt-5">
           <h2>Project 1</h2>
+
+          <button className="btn btn-primary btn-lg" style={{float: 'right'}}>Run Project</button>
 
           <button className="btn btn-primary btn-lg mt-3">+ Create Task</button>
 
@@ -43,9 +49,15 @@ function App() {
               <tr>
                 <td>Task 1 (Worksheet)</td>
                 <td>Fixed</td>
-                <td>Run</td>
-                <td>Rename</td>
-                <td>Delete</td>
+                <td>
+                  <button className="btn btn-success btn-sm">Run</button>
+                </td>
+                <td>
+                  <button className="btn btn-info btn-sm">Rename</button>
+                </td>
+                <td>
+                  <button className="btn btn-danger btn-sm">Delete</button>
+                </td>
               </tr>
             </tbody>
           </table>
