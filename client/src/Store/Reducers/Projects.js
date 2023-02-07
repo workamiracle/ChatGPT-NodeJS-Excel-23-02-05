@@ -1,4 +1,4 @@
-import { ADD_PROJECT, ADD_TASK } from "../Actions/type";
+import { ADD_PROJECT,DELETE_PROJECT, ADD_TASK } from "../Actions/type";
 
 const initialState = {
   projects: [],
@@ -12,9 +12,14 @@ function projectReducer(state = initialState, action) {
     case ADD_PROJECT:
       return {
         ...state,
-        projects: [...state.projects, payload.project],
-        project: payload.project
+        projects: [...state.projects, payload]
       };
+
+    case DELETE_PROJECT:
+      return {
+        ...state,
+        projects: state.projects.filter((project, index) => index !== payload.index)
+      }
 
     default:
       return state;
