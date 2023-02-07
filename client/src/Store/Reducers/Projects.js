@@ -15,6 +15,9 @@ function projectReducer(state = initialState, action) {
         projects: [...state.projects, payload.project],
         project: payload.project
       };
+
+    default:
+      return state;
   }
 }
 

@@ -2,7 +2,7 @@ import { legacy_createStore, applyMiddleware } from "redux";
 import { composeWithDevTools } from 'redux-devtools-extension';
 import thunk from 'redux-thunk';
 
-import rootReucer from './Reducers';
+import rootReducer from './Reducers';
 
 
 const initialState = {};
@@ -14,3 +14,5 @@ const store = legacy_createStore(
   initialState,
   composeWithDevTools(applyMiddleware(...middleware))
 );
+
+export default store;

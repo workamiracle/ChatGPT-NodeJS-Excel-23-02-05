@@ -3,4 +3,4 @@ import projects from "./Projects";
 
 export default combineReducers({
   projects
-})
+});
