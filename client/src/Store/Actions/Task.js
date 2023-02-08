@@ -24,6 +24,4 @@ export const deleteTask = (projectIndex, taskIndex) => (dispatch) => {
   });
 }
 
-export const runTask = (projectIndex, taskIndex) => {
-  
-}
+export const runTask = (projectIndex, taskIndex) => {}
