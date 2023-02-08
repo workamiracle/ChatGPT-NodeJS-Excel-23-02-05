@@ -3,9 +3,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import { deleteTask } from '../../Store/Actions/Task';
+import { deleteTask, runTask, runProject } from '../../Store/Actions/Task';
 
-const Task = ({project, deleteTask}) => {
+const Task = ({project, deleteTask, runTask, runProject}) => {
   const navigate = useNavigate();
 
   const TaskTable = (
@@ -25,7 +25,7 @@ const Task = ({project, deleteTask}) => {
             <td>{task.name} ({task.sheet})</td>
             <td>{task.type}</td>
             <td>
-              <button className="btn btn-success btn-sm">Run</button>
+              <button className="btn btn-success btn-sm" onClick={() => runTask(project.doc, task.sheet, task.type)}>Run</button>
             </td>
             <td>
               <button className="btn btn-info btn-sm">Rename</button>
@@ -46,7 +46,11 @@ const Task = ({project, deleteTask}) => {
         <div className="Task-panel mt-5 p-5" style={{borderRadius: '3px', border: '1px solid #333'}}>
           <h2>{project.name}</h2>
 
-          <button className="btn btn-primary btn-lg" style={{float: 'right'}}>Run Project</button>
+          <button className="btn btn-primary btn-lg" style={{float: 'right'}} 
+            onClick={() => runProject(project.tasks)}
+          >
+            Run Project
+          </button>
 
           <Link to={"/create_task"}>
             <button className="btn btn-primary btn-lg mt-3">+ Create Task</button>
@@ -61,11 +65,13 @@ const Task = ({project, deleteTask}) => {
 
 Task.propTypes = {
   project: PropTypes.object,
-  deleteTask: PropTypes.func.isRequired
+  deleteTask: PropTypes.func.isRequired,
+  runTask: PropTypes.func.isRequired,
+  runProject: PropTypes.func.isRequired,
 }
 
 const mapStateToProps = (state) => ({
   project: state.projects.project
 });
 
-export default connect(mapStateToProps, { deleteTask })(Task);
+export default connect(mapStateToProps, { deleteTask, runTask, runProject })(Task);
