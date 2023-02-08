@@ -1,11 +1,18 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import { deleteProject } from '../../Store/Actions/Project';
+import { deleteProject, selectProject } from '../../Store/Actions/Project';
 
-const Project = ({projects, deleteProject}) => {
+const Project = ({projects, deleteProject, selectProject}) => {
+  const navigate = useNavigate();
+
+  const onSelectProject = (index) => {
+    selectProject(index);
+
+    navigate('/task');
+  }
 
   const ProjectTable = (
     <table className="table table-info table-striped mt-4">
@@ -19,7 +26,7 @@ const Project = ({projects, deleteProject}) => {
       <tbody>
         {projects.map((project, index) => (
           <tr key={index}>
-            <td>{project.name} ({project.doc})</td>
+            <td onClick={() => onSelectProject(index)}>{project.name} ({project.doc})</td>
             <td>
               <button className="btn btn-info btn-sm">Rename</button>
             </td>
@@ -56,4 +63,4 @@ const mapStateToProps = (state) => ({
   projects: state.projects.projects
 });
 
-export default connect(mapStateToProps, {deleteProject})(Project);
+export default connect(mapStateToProps, {deleteProject, selectProject})(Project);

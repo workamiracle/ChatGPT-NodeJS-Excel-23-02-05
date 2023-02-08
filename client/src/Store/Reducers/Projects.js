@@ -1,8 +1,13 @@
-import { ADD_PROJECT,DELETE_PROJECT, ADD_TASK } from "../Actions/type";
+import { ADD_PROJECT,DELETE_PROJECT, ADD_TASK, DELETE_TASK, SELECT_PROJECT } from "../Actions/type";
 
 const initialState = {
   projects: [],
-  project: {}
+  project: {
+    index: -1,
+    name: '',
+    doc: '',
+    tasks: []
+  }
 }
 
 function projectReducer(state = initialState, action) {
@@ -19,6 +24,40 @@ function projectReducer(state = initialState, action) {
       return {
         ...state,
         projects: state.projects.filter((project, index) => index !== payload.index)
+      }
+
+    case SELECT_PROJECT:
+      return {
+        ...state,
+        project: {
+          ...state.projects[payload.index], 
+          index: payload.index
+        }
+      }
+
+    case ADD_TASK:
+      const { index, name, sheet, type } = payload;
+      let newProjects = state.projects;
+      newProjects[index].tasks.push({
+        name,
+        sheet,
+        type
+      });
+
+      return {
+        ...state,
+        projects: newProjects
+      }
+
+    case DELETE_TASK:
+      const { projectIndex, taskIndex } = payload;
+      
+      let newProjects1 = state.projects;
+      newProjects1[projectIndex].tasks.splice(taskIndex, 1);
+
+      return {
+        ...state,
+        projects: newProjects1
       }
 
     default:
