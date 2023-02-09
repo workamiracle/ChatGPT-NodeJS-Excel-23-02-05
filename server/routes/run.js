@@ -3,8 +3,6 @@ const router = express.Router();
 
 const Excel = require('exceljs');
 
-const { GoogleSpreadsheet } = require('google-spreadsheet');
-
 const { Configuration, OpenAIApi } = require("openai");
 const configuration = new Configuration({
   apiKey: process.env.REACT_APP_OPENAI_API_KEY,
@@ -430,6 +428,8 @@ router.post('/project', async (req, res) => {
       });
 
       workbook.xlsx.writeFile(doc);
+
+      res.status(200).json('Finished');
     });
   } catch(err) {
     console.log(err.message);

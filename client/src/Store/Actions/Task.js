@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import { ADD_TASK, DELETE_TASK, RUNNING } from "./type";
+import { ADD_TASK, DELETE_TASK, FINISHED, RUNNING } from "./type";
 
 
 
@@ -36,15 +36,23 @@ export const runTask = (doc, sheet, type) => async (dispatch) => {
     sheet,
     type
   });
+
+  dispatch({
+    type: FINISHED
+  });
 }
 
 export const runProject = (doc, tasks) => async (dispatch) => {
   dispatch({
     type: RUNNING
   });
-  
+
   const res = await axios.post('/run/project', {
     doc,
     tasks
+  });
+
+  dispatch({
+    type: FINISHED
   });
 }

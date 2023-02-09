@@ -9,3 +9,4 @@ export const RUN_TASK = 'RUN_TASK';
 export const RUN_PROJECT = 'RUN_PROJECT';
 
 export const RUNNING = 'RUNNIG';
+export const FINISHED = 'FINISHED';

@@ -20,16 +20,12 @@ const Project = ({projects, deleteProject, selectProject}) => {
         <tr className="table-primary">
           <th>Porject Name</th>
           <th></th>
-          <th></th>
         </tr>
       </thead>
       <tbody>
         {projects.map((project, index) => (
           <tr key={index}>
             <td onClick={() => onSelectProject(index)}>{project.name} ({project.doc})</td>
-            <td>
-              <button className="btn btn-info btn-sm">Rename</button>
-            </td>
             <td>
               <button className="btn btn-danger btn-sm" onClick={() => deleteProject(index)}>Delete</button>
             </td>

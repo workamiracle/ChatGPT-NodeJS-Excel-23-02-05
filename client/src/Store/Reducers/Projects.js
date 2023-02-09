@@ -1,4 +1,4 @@
-import { ADD_PROJECT,DELETE_PROJECT, ADD_TASK, DELETE_TASK, SELECT_PROJECT, RUNNING } from "../Actions/type";
+import { ADD_PROJECT,DELETE_PROJECT, ADD_TASK, DELETE_TASK, SELECT_PROJECT, RUNNING, FINISHED } from "../Actions/type";
 
 const initialState = {
   projects: [],
@@ -8,7 +8,8 @@ const initialState = {
     doc: '',
     tasks: []
   },
-  isRunning: false
+  isRunning: false,
+  isFinished: false
 }
 
 function projectReducer(state = initialState, action) {
@@ -64,7 +65,15 @@ function projectReducer(state = initialState, action) {
     case RUNNING:
       return {
         ...state,
-        isRunning: true
+        isRunning: true,
+        isFinished: false
+      }
+
+    case FINISHED:
+      return {
+        ...state,
+        isRunning: false,
+        isFinished: true
       }
 
     default:
