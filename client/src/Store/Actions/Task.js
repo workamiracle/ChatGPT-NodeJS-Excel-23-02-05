@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import { ADD_TASK, DELETE_TASK, FINISHED, RUNNING } from "./type";
+import { ADD_TASK, DELETE_TASK, FINISHED, RUNNING, SERVER_ERROR } from "./type";
 
 
 
@@ -31,15 +31,22 @@ export const runTask = (doc, sheet, type) => async (dispatch) => {
     type: RUNNING
   });
 
-  const res = await axios.post('/run/task', {
-    doc,
-    sheet,
-    type
-  });
-
-  dispatch({
-    type: FINISHED
-  });
+  try {
+    const res = await axios.post('/run/task', {
+      doc,
+      sheet,
+      type
+    });
+  
+    dispatch({
+      type: FINISHED
+    });
+  } catch (error) {
+    alert('Server Error');
+    dispatch({
+      type: SERVER_ERROR
+    });
+  }
 }
 
 export const runProject = (doc, tasks) => async (dispatch) => {
@@ -47,12 +54,21 @@ export const runProject = (doc, tasks) => async (dispatch) => {
     type: RUNNING
   });
 
-  const res = await axios.post('/run/project', {
-    doc,
-    tasks
-  });
+  try {
+    const res = await axios.post('/run/project', {
+      doc,
+      tasks
+    });
 
-  dispatch({
-    type: FINISHED
-  });
+    dispatch({
+      type: FINISHED
+    });
+  } catch (error) {
+    alert('Server Error');
+    dispatch({
+      type: SERVER_ERROR
+    });
+  }
+
+  
 }

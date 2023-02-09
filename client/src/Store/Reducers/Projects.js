@@ -1,4 +1,4 @@
-import { ADD_PROJECT,DELETE_PROJECT, ADD_TASK, DELETE_TASK, SELECT_PROJECT, RUNNING, FINISHED } from "../Actions/type";
+import { ADD_PROJECT,DELETE_PROJECT, ADD_TASK, DELETE_TASK, SELECT_PROJECT, RUNNING, FINISHED, SERVER_ERROR } from "../Actions/type";
 
 const initialState = {
   projects: [],
@@ -74,6 +74,13 @@ function projectReducer(state = initialState, action) {
         ...state,
         isRunning: false,
         isFinished: true
+      }
+
+    case SERVER_ERROR:
+      return {
+        ...state,
+        isRunning: false,
+        isFinished: false
       }
 
     default:

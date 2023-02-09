@@ -20,7 +20,10 @@ router.post('/', async (req, res) => {
   res.json({ botResponse: response.data.choices[0].text });
 });
 
-router.post('/task', async (req, res) => {
+
+
+
+router.post('/task', (req, res) => {
   try {
     const {doc, sheet, type} = req.body;
 
@@ -49,15 +52,23 @@ router.post('/task', async (req, res) => {
           
             while(response.data.error || response.status !== 200) {
               console.log('sending prompt...............');
-              response = await openai.createCompletion({
-                model: "text-davinci-003",
-                prompt,
-                temperature: 0.7,
-                max_tokens: 256,
-                top_p: 1,
-                frequency_penalty: 0,
-                presence_penalty: 0,
-              });
+
+              try {
+                response = await openai.createCompletion({
+                  model: "text-davinci-003",
+                  prompt,
+                  temperature: 0,
+                  max_tokens: 3000,
+                  top_p: 1,
+                  frequency_penalty: 0.5,
+                  presence_penalty: 0,
+                });
+              } catch (err) {
+                //workbook.xlsx.writeFile(doc);
+                console.log('Server Error');
+                continue;
+                //return res.status(500).json({error: 'Server Error'});
+              }
             }
             console.log('done');
             console.log(response.data.choices[0].text.trim());
@@ -89,15 +100,24 @@ router.post('/task', async (req, res) => {
           
             while(response.status !== 200) {
               console.log('sending prompt...............');
-              response = await openai.createCompletion({
-                model: "text-davinci-003",
-                prompt,
-                temperature: 0,
-                max_tokens: 256,
-                top_p: 1,
-                frequency_penalty: 0.5,
-                presence_penalty: 0,
-              });
+
+              try {
+                response = await openai.createCompletion({
+                  model: "text-davinci-003",
+                  prompt,
+                  temperature: 0,
+                  max_tokens: 256,
+                  top_p: 1,
+                  frequency_penalty: 0.5,
+                  presence_penalty: 0,
+                });
+              } catch (error) {
+                //workbook.xlsx.writeFile(doc);
+
+                console.log('Server Error');
+                continue;
+                ///return res.status(500).json({error: 'Server Error'});
+              }
             }
             console.log('done');
             console.log(response.data.choices[0].text.trim());
@@ -122,15 +142,24 @@ router.post('/task', async (req, res) => {
           
           while(response.status !== 200) {
             console.log('sending prompt...............');
-            response = await openai.createCompletion({
-              model: "text-davinci-003",
-              prompt,
-              temperature: 0,
-              max_tokens: 256,
-              top_p: 1,
-              frequency_penalty: 0.5,
-              presence_penalty: 0,
-            });
+
+            try{
+              response = await openai.createCompletion({
+                model: "text-davinci-003",
+                prompt,
+                temperature: 0,
+                max_tokens: 256,
+                top_p: 1,
+                frequency_penalty: 0.5,
+                presence_penalty: 0,
+              });
+            } catch (error) {
+              //workbook.xlsx.writeFile(doc);
+
+              console.log('Server Error');
+              continue;
+              //return res.status(500).json({error: 'Server Error'});
+            }
           }
           console.log('done');
 
@@ -150,15 +179,24 @@ router.post('/task', async (req, res) => {
           
           while(response.status !== 200) {
             console.log('sending prompt...............');
-            response = await openai.createCompletion({
-              model: "text-davinci-003",
-              prompt,
-              temperature: 0,
-              max_tokens: 256,
-              top_p: 1,
-              frequency_penalty: 0.5,
-              presence_penalty: 0,
-            });
+
+            try{
+              response = await openai.createCompletion({
+                model: "text-davinci-003",
+                prompt,
+                temperature: 0,
+                max_tokens: 256,
+                top_p: 1,
+                frequency_penalty: 0.5,
+                presence_penalty: 0,
+              });
+            } catch (error) {
+              //workbook.xlsx.writeFile(doc);
+
+              console.log('Server Error');
+              continue;
+              //return res.status(500).json({error: 'Server Error'});
+            }
           }
           console.log('done');
 
@@ -176,15 +214,24 @@ router.post('/task', async (req, res) => {
           
           while(response.status !== 200) {
             console.log('sending prompt...............');
-            response = await openai.createCompletion({
-              model: "text-davinci-003",
-              prompt,
-              temperature: 0,
-              max_tokens: 256,
-              top_p: 1,
-              frequency_penalty: 0.5,
-              presence_penalty: 0,
-            });
+
+            try{
+              response = await openai.createCompletion({
+                model: "text-davinci-003",
+                prompt,
+                temperature: 0,
+                max_tokens: 256,
+                top_p: 1,
+                frequency_penalty: 0.5,
+                presence_penalty: 0,
+              });
+            } catch (error) {
+              //workbook.xlsx.writeFile(doc);
+
+              console.log('Server Error');
+              continue;
+              //return res.status(500).json({error: 'Server Error'});
+            }
           }
           console.log('done');
 
@@ -200,41 +247,56 @@ router.post('/task', async (req, res) => {
           
           while(response.status !== 200) {
             console.log('sending prompt...............');
-            response = await openai.createCompletion({
-              model: "text-davinci-003",
-              prompt,
-              temperature: 0,
-              max_tokens: 256,
-              top_p: 1,
-              frequency_penalty: 0.5,
-              presence_penalty: 0,
-            });
+
+            try {
+              response = await openai.createCompletion({
+                model: "text-davinci-003",
+                prompt,
+                temperature: 0,
+                max_tokens: 256,
+                top_p: 1,
+                frequency_penalty: 0.5,
+                presence_penalty: 0,
+              });
+            } catch (error) {
+              //workbook.xlsx.writeFile(doc);
+
+              console.log('Server Error');
+              continue;
+              //return res.status(500).json({error: 'Server Error'});
+            }
           }
           console.log('done');
           console.log(response.data.choices[0].text.trim());
 
           if(score < 8) row.getCell(8).value = response.data.choices[0].text.trim();
           else row.getCell(9).value = response.data.choices[0].text.trim();
+
+          row.getCell(1).value = response.data.choices[0].text.trim();
         }
       } 
       workbook.xlsx.writeFile(doc);
       
-      res.status(200).json('Finished');
+      return res.status(200).json({res: 'Finished'});
     });
   } catch(err) {
     console.error(err.message);
-    res.status(500).send('Server Error');
+    res.status(500).send({error: 'Server Error'});
   }
 })
 
-router.post('/project', async (req, res) => {
+
+
+
+router.post('/project', (req, res) => {
   try {
     const {doc, tasks} = req.body;
 
     let workbook = new Excel.Workbook();
+
     workbook.xlsx.readFile(doc).then(async () => {
-      tasks.forEach(async (task) => {
-        let {sheet, type} = task;
+      for( let j = 0; j < tasks.length; j ++) {
+        let {sheet, type} = tasks[j];
         let worksheet = workbook.getWorksheet(sheet);
 
         if(type === 'Build') {
@@ -257,15 +319,23 @@ router.post('/project', async (req, res) => {
             
               while(response.data.error || response.status !== 200) {
                 console.log('sending prompt...............');
-                response = await openai.createCompletion({
-                  model: "text-davinci-003",
-                  prompt,
-                  temperature: 0.7,
-                  max_tokens: 256,
-                  top_p: 1,
-                  frequency_penalty: 0,
-                  presence_penalty: 0,
-                });
+                
+                try {
+                  response = await openai.createCompletion({
+                    model: "text-davinci-003",
+                    prompt,
+                    temperature: 0.7,
+                    max_tokens: 256,
+                    top_p: 1,
+                    frequency_penalty: 0,
+                    presence_penalty: 0,
+                  });
+                } catch (error) {
+                  //workbook.xlsx.writeFile(doc);
+                  console.log(error);
+                  continue;
+                  //return res.status(500).json({error: 'Server Error'});
+                }
               }
               console.log('done');
               console.log(response.data.choices[0].text.trim());
@@ -297,15 +367,24 @@ router.post('/project', async (req, res) => {
             
               while(response.status !== 200) {
                 console.log('sending prompt...............');
-                response = await openai.createCompletion({
-                  model: "text-davinci-003",
-                  prompt,
-                  temperature: 0,
-                  max_tokens: 256,
-                  top_p: 1,
-                  frequency_penalty: 0.5,
-                  presence_penalty: 0,
-                });
+                
+                try {
+                  response = await openai.createCompletion({
+                    model: "text-davinci-003",
+                    prompt,
+                    temperature: 0,
+                    max_tokens: 256,
+                    top_p: 1,
+                    frequency_penalty: 0.5,
+                    presence_penalty: 0,
+                  });
+                } catch (error) {
+                  //workbook.xlsx.writeFile(doc);
+
+                  console.log(error);
+                  continue;
+                  //return res.status(500).json({error: 'Server Error'});
+                }
               }
               console.log('done');
               console.log(response.data.choices[0].text.trim());
@@ -330,15 +409,24 @@ router.post('/project', async (req, res) => {
             
             while(response.status !== 200) {
               console.log('sending prompt...............');
-              response = await openai.createCompletion({
-                model: "text-davinci-003",
-                prompt,
-                temperature: 0,
-                max_tokens: 256,
-                top_p: 1,
-                frequency_penalty: 0.5,
-                presence_penalty: 0,
-              });
+              
+              try {
+                response = await openai.createCompletion({
+                  model: "text-davinci-003",
+                  prompt,
+                  temperature: 0,
+                  max_tokens: 256,
+                  top_p: 1,
+                  frequency_penalty: 0.5,
+                  presence_penalty: 0,
+                });
+              } catch (error) {
+                //workbook.xlsx.writeFile(doc);
+                console.log(error);
+                continue;
+
+                //return res.status(500).json({error: 'Server Error'});
+              }
             }
             console.log('done');
     
@@ -358,15 +446,24 @@ router.post('/project', async (req, res) => {
             
             while(response.status !== 200) {
               console.log('sending prompt...............');
-              response = await openai.createCompletion({
-                model: "text-davinci-003",
-                prompt,
-                temperature: 0,
-                max_tokens: 256,
-                top_p: 1,
-                frequency_penalty: 0.5,
-                presence_penalty: 0,
-              });
+              
+              try {
+                response = await openai.createCompletion({
+                  model: "text-davinci-003",
+                  prompt,
+                  temperature: 0,
+                  max_tokens: 256,
+                  top_p: 1,
+                  frequency_penalty: 0.5,
+                  presence_penalty: 0,
+                });
+              } catch (error) {
+                //workbook.xlsx.writeFile(doc);
+                console.log(error);
+                continue;
+
+                //return res.status(500).json({error: 'Server Error'});
+              }
             }
             console.log('done');
     
@@ -384,15 +481,24 @@ router.post('/project', async (req, res) => {
             
             while(response.status !== 200) {
               console.log('sending prompt...............');
-              response = await openai.createCompletion({
-                model: "text-davinci-003",
-                prompt,
-                temperature: 0,
-                max_tokens: 256,
-                top_p: 1,
-                frequency_penalty: 0.5,
-                presence_penalty: 0,
-              });
+              
+              try {
+                response = await openai.createCompletion({
+                  model: "text-davinci-003",
+                  prompt,
+                  temperature: 0,
+                  max_tokens: 256,
+                  top_p: 1,
+                  frequency_penalty: 0.5,
+                  presence_penalty: 0,
+                });
+              } catch (error) {
+                //workbook.xlsx.writeFile(doc);
+                console.log(error);
+                continue;
+
+                //return res.status(500).json({error: 'Server Error'});
+              }
             }
             console.log('done');
     
@@ -408,33 +514,44 @@ router.post('/project', async (req, res) => {
             
             while(response.status !== 200) {
               console.log('sending prompt...............');
-              response = await openai.createCompletion({
-                model: "text-davinci-003",
-                prompt,
-                temperature: 0,
-                max_tokens: 256,
-                top_p: 1,
-                frequency_penalty: 0.5,
-                presence_penalty: 0,
-              });
+              
+              try {
+                response = await openai.createCompletion({
+                  model: "text-davinci-003",
+                  prompt,
+                  temperature: 0,
+                  max_tokens: 256,
+                  top_p: 1,
+                  frequency_penalty: 0.5,
+                  presence_penalty: 0,
+                });
+              } catch (error) {
+                //workbook.xlsx.writeFile(doc);
+                console.log(error);
+                continue;
+
+                //return res.status(500).json({error: 'Server Error'});
+              }
             }
             console.log('done');
             console.log(response.data.choices[0].text.trim());
     
             if(score < 8) row.getCell(8).value = response.data.choices[0].text.trim();
             else row.getCell(9).value = response.data.choices[0].text.trim();
+
+            row.getCell(1).value = response.data.choices[0].text.trim();
           }
         } 
-      });
+      };
 
       workbook.xlsx.writeFile(doc);
 
-      res.status(200).json('Finished');
+      return res.status(200).json({res: 'Finished'});
     });
   } catch(err) {
     console.log(err.message);
 
-    res.status(500).json('Server Error');
+    res.status(500).send({error: 'Server Error'});
   }
 })
 

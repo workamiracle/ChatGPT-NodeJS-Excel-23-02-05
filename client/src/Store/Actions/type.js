@@ -10,3 +10,4 @@ export const RUN_PROJECT = 'RUN_PROJECT';
 
 export const RUNNING = 'RUNNIG';
 export const FINISHED = 'FINISHED';
+export const SERVER_ERROR = 'SERVER_ERROR';
