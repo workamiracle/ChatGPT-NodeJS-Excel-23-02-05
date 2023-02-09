@@ -1,4 +1,4 @@
-import { ADD_PROJECT,DELETE_PROJECT, ADD_TASK, DELETE_TASK, SELECT_PROJECT } from "../Actions/type";
+import { ADD_PROJECT,DELETE_PROJECT, ADD_TASK, DELETE_TASK, SELECT_PROJECT, RUNNING } from "../Actions/type";
 
 const initialState = {
   projects: [],
@@ -7,7 +7,8 @@ const initialState = {
     name: '',
     doc: '',
     tasks: []
-  }
+  },
+  isRunning: false
 }
 
 function projectReducer(state = initialState, action) {
@@ -58,6 +59,12 @@ function projectReducer(state = initialState, action) {
       return {
         ...state,
         projects: newProjects1
+      }
+
+    case RUNNING:
+      return {
+        ...state,
+        isRunning: true
       }
 
     default:

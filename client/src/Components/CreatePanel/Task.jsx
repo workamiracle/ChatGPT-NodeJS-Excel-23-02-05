@@ -46,7 +46,7 @@ const CreateTask = ({addTask, project}) => {
           <select className='form-select' name='type' value={formData.type} onChange={onChange}>
             <option value="Build">Build</option>
             <option value="Fixed">Fixed</option>
-            <option value="If/then">If/then</option>
+            <option value="If, Then">If/then</option>
           </select>
           <br />
         </div>

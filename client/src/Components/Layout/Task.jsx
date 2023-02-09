@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 
 import { deleteTask, runTask, runProject } from '../../Store/Actions/Task';
 
-const Task = ({project, deleteTask, runTask, runProject}) => {
+const Task = ({project, isRunning, deleteTask, runTask, runProject}) => {
   const navigate = useNavigate();
 
   const TaskTable = (
@@ -47,7 +47,7 @@ const Task = ({project, deleteTask, runTask, runProject}) => {
           <h2>{project.name}</h2>
 
           <button className="btn btn-primary btn-lg" style={{float: 'right'}} 
-            onClick={() => runProject(project.tasks)}
+            onClick={() => runProject(project.doc, project.tasks)}
           >
             Run Project
           </button>
@@ -71,7 +71,8 @@ Task.propTypes = {
 }
 
 const mapStateToProps = (state) => ({
-  project: state.projects.project
+  project: state.projects.project,
+  isRunning: state.projects.isRunning
 });
 
 export default connect(mapStateToProps, { deleteTask, runTask, runProject })(Task);
