@@ -91,7 +91,7 @@ router.post('/task', (req, res) => {
           for (let j = 3; j <= colCount; j ++) {
             let prompt = row1.getCell(j).value.replace('{Role}', role);
             prompt = prompt.replace('{Situation}', situation);
-            prompt = prompt + '{' + row.getCell(2).value + '}'; 
+            prompt = prompt.replace('{B}', '{' + row.getCell(2).value + '}'); 
             console.log(prompt);
 
             let response = {
@@ -162,8 +162,9 @@ router.post('/task', (req, res) => {
             }
           }
           console.log('done');
+          console.log(response.data.choices[0].text.trim());
 
-          let score = +response.data.choices[0].text.trim().slice(28, 30);
+          let score = getScore(response.data.choices[0].text.trim());
           row.getCell(3).value = score;
 
           if(score < 3) prompt = row1.getCell(4).value;
@@ -199,6 +200,7 @@ router.post('/task', (req, res) => {
             }
           }
           console.log('done');
+          console.log(response.data.choices[0].text.trim());
 
           prompt = response.data.choices[0].text.trim();
           console.log(prompt);
@@ -234,8 +236,9 @@ router.post('/task', (req, res) => {
             }
           }
           console.log('done');
+          console.log(response.data.choices[0].text.trim());
 
-          score = +response.data.choices[0].text.trim().slice(28, 30);
+          score = getScore(response.data.choices[0].text.trim());
           row.getCell(7).value = score;
           prompt = score < 8 ? row1.getCell(8).value : row1.getCell(9).value;
           prompt = prompt.replace('{G}', '{' + res1 + '}');
@@ -358,7 +361,7 @@ router.post('/project', (req, res) => {
             for (let j = 3; j <= colCount; j ++) {
               let prompt = row1.getCell(j).value.replace('{Role}', role);
               prompt = prompt.replace('{Situation}', situation);
-              prompt = prompt + '{' + row.getCell(2).value + '}'; 
+              prompt = prompt.replace('{B}', '{' + row.getCell(2).value + '}'); 
               console.log(prompt);
     
               let response = {
@@ -430,7 +433,7 @@ router.post('/project', (req, res) => {
             }
             console.log('done');
     
-            let score = +response.data.choices[0].text.trim().slice(28, 30);
+            let score = getScore(response.data.choices[0].text.trim());
             row.getCell(3).value = score;
     
             if(score < 3) prompt = row1.getCell(4).value;
@@ -502,7 +505,7 @@ router.post('/project', (req, res) => {
             }
             console.log('done');
     
-            score = +response.data.choices[0].text.trim().slice(28, 30);
+            score = getScore(response.data.choices[0].text.trim());
             row.getCell(7).value = score;
             prompt = score < 8 ? row1.getCell(8).value : row1.getCell(9).value;
             prompt = prompt.replace('{G}', '{' + res1 + '}');
@@ -554,5 +557,12 @@ router.post('/project', (req, res) => {
     res.status(500).send({error: 'Server Error'});
   }
 })
+
+const getScore = (answer) => {
+  let first = answer.search(/[1-9]/);
+
+  if(answer[first] === '1' && answer[first+1] === '0') return 10;
+  else return +answer[first];
+}
 
 module.exports = router;
