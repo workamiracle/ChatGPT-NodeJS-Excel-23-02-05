@@ -439,6 +439,7 @@ router.post('/project', (req, res) => {
                 if(score <= cret) {
                   let prompt = row1.getCell(j).value;
                   prompt = replaceCells(worksheet, row, roles, prompt);
+                  prompt = prompt + '{' + lastAnswer + '}';
 
                   let response = {
                     status: 0
@@ -476,6 +477,7 @@ router.post('/project', (req, res) => {
                 if(score > cret) {
                   let prompt = row1.getCell(j).value;
                   prompt = replaceCells(worksheet, row, roles, prompt);
+                  prompt = prompt + '{' + lastAnswer + '}';
 
                   let response = {
                     status: 0
