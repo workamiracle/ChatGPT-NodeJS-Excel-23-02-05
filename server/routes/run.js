@@ -141,6 +141,12 @@ router.post('/task', (req, res) => {
         
         for(let i = 22; i <= worksheet.rowCount; i ++) {
           let row = worksheet.getRow(i);
+          let lastAnswer = row.getCell('B').value;
+          let score = -1;
+
+          for(let j = 3; j <= colCount; j ++) {
+            
+          }
 
           let prompt = row1.getCell(3).value;
           prompt = replaceCells(worksheet, row, roles, prompt);
@@ -527,7 +533,7 @@ router.post('/project', (req, res) => {
             score = getScore(response.data.choices[0].text.trim());
             row.getCell(7).value = score;
             prompt = score < 8 ? row1.getCell(8).value : row1.getCell(9).value;
-            prompt = replaceCells(worksheet, row, roles, prompt);
+            prompt = prompt.replace('{G}', '{' + res1 + '}');
             response = {
               status: 0
             };
