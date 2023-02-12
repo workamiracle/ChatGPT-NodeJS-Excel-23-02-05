@@ -4,10 +4,14 @@ const router = express.Router();
 const Excel = require('exceljs');
 
 const { Configuration, OpenAIApi } = require("openai");
+
 const configuration = new Configuration({
   apiKey: process.env.REACT_APP_OPENAI_API_KEY,
 });
+
 const openai = new OpenAIApi(configuration);
+
+
 
 router.post('/', async (req, res) => {
   const { message } = req.body;
@@ -32,16 +36,23 @@ router.post('/task', (req, res) => {
     workbook.xlsx.readFile(doc).then(async () => {
       let worksheet = workbook.getWorksheet(sheet);
 
+      let roles = {};
+      for (let i = 2; i < 21; i ++) {
+        if(worksheet.getCell('A' + i).value) {
+          roles[worksheet.getCell('A' + i).value] = worksheet.getCell('B' + i).value;
+        }
+      }
+
       if(type === 'Build') {
         let colCount = worksheet.columnCount;
-        let row1 = worksheet.getRow(1);
+        let row1 = worksheet.getRow(21);
         
-        for(let i = 2; i <= worksheet.rowCount; i ++) {
+        for(let i = 22; i <= worksheet.rowCount; i ++) {
           let row = worksheet.getRow(i);
           
           for (let j = 3; j <= colCount; j ++) {
-            let prompt = row1.getCell(j).value + '{' + row.getCell(j -1).value + '}'; 
-            console.log(prompt);
+            let prompt = row1.getCell(j).value;
+            prompt = replaceCells(worksheet, row, roles, prompt);
 
             let response = {
               status: 0,
@@ -52,6 +63,7 @@ router.post('/task', (req, res) => {
           
             while(response.data.error || response.status !== 200) {
               console.log('sending prompt...............');
+              console.log(prompt + '\n');
 
               try {
                 response = await openai.createCompletion({
@@ -70,8 +82,8 @@ router.post('/task', (req, res) => {
                 //return res.status(500).json({error: 'Server Error'});
               }
             }
-            console.log('done');
-            console.log(response.data.choices[0].text.trim());
+            console.log('result-----------------------------------------');
+            console.log(response.data.choices[0].text.trim() + '\n');
 
             row.getCell(j).value = response.data.choices[0].text.trim();          
           }
@@ -80,19 +92,15 @@ router.post('/task', (req, res) => {
       } 
 
       else if(type === 'Fixed') {
-        let role = worksheet.getRow(2).getCell(2).value;
-        let situation = worksheet.getRow(3).getCell(2).value;
         let colCount = worksheet.columnCount;
-        let row1 = worksheet.getRow(7);
+        let row1 = worksheet.getRow(21);
         
-        for(let i = 8; i <= worksheet.rowCount; i ++) {
+        for(let i = 22; i <= worksheet.rowCount; i ++) {
           let row = worksheet.getRow(i);
           
           for (let j = 3; j <= colCount; j ++) {
-            let prompt = row1.getCell(j).value.replace('{Role}', role);
-            prompt = prompt.replace('{Situation}', situation);
-            prompt = prompt.replace('{B}', '{' + row.getCell(2).value + '}'); 
-            console.log(prompt);
+            let prompt = row1.getCell(j).value;
+            prompt = replaceCells(worksheet, row, roles, prompt);
 
             let response = {
               status: 0
@@ -100,6 +108,7 @@ router.post('/task', (req, res) => {
           
             while(response.status !== 200) {
               console.log('sending prompt...............');
+              console.log(prompt);
 
               try {
                 response = await openai.createCompletion({
@@ -128,13 +137,13 @@ router.post('/task', (req, res) => {
       } 
       else if(type === 'If, Then') {
         let colCount = worksheet.columnCount;
-        let row1 = worksheet.getRow(2);
+        let row1 = worksheet.getRow(21);
         
-        for(let i = 3; i <= worksheet.rowCount; i ++) {
+        for(let i = 22; i <= worksheet.rowCount; i ++) {
           let row = worksheet.getRow(i);
 
-          let prompt = row1.getCell(3).value.replace('{B}', '{' + row.getCell(2).value + '}');
-          console.log(prompt);
+          let prompt = row1.getCell(3).value;
+          prompt = replaceCells(worksheet, row, roles, prompt);
 
           let response = {
             status: 0
@@ -142,6 +151,7 @@ router.post('/task', (req, res) => {
           
           while(response.status !== 200) {
             console.log('sending prompt...............');
+            console.log(prompt);
 
             try{
               response = await openai.createCompletion({
@@ -171,7 +181,8 @@ router.post('/task', (req, res) => {
           else if(score < 8) prompt = row1.getCell(5).value;
           else prompt = row1.getCell(6).value;
 
-          prompt = prompt.replace('{B}', '{' + row.getCell(2).value + '}');
+          prompt = replaceCells(worksheet, row, roles, prompt);
+
           response = {
             status: 0
           };
@@ -204,6 +215,7 @@ router.post('/task', (req, res) => {
 
           prompt = response.data.choices[0].text.trim();
           console.log(prompt);
+
           let res1 = prompt;
           if(score < 3) row.getCell(4).value = res1;
           else if(score < 8) row.getCell(5).value = res1;
@@ -302,16 +314,23 @@ router.post('/project', (req, res) => {
         let {sheet, type} = tasks[j];
         let worksheet = workbook.getWorksheet(sheet);
 
+        let roles = {};
+        for (let i = 2; i < 21; i ++) {
+          if(worksheet.getCell('A' + i).value) {
+            roles[worksheet.getCell('A' + i).value] = worksheet.getCell('B' + i).value;
+          }
+        }
+
         if(type === 'Build') {
           let colCount = worksheet.columnCount;
-          let row1 = worksheet.getRow(1);
+          let row1 = worksheet.getRow(21);
           
-          for(let i = 2; i <= worksheet.rowCount; i ++) {
+          for(let i = 22; i <= worksheet.rowCount; i ++) {
             let row = worksheet.getRow(i);
             
             for (let j = 3; j <= colCount; j ++) {
-              let prompt = row1.getCell(j).value + '{' + row.getCell(j -1).value + '}'; 
-              console.log(prompt);
+              let prompt = row1.getCell(j).value;
+              prompt = replaceCells(worksheet, row, roles, prompt);              
     
               let response = {
                 status: 0,
@@ -322,7 +341,8 @@ router.post('/project', (req, res) => {
             
               while(response.data.error || response.status !== 200) {
                 console.log('sending prompt...............');
-                
+                console.log(prompt);
+
                 try {
                   response = await openai.createCompletion({
                     model: "text-davinci-003",
@@ -350,19 +370,15 @@ router.post('/project', (req, res) => {
         } 
     
         else if(type === 'Fixed') {
-          let role = worksheet.getRow(2).getCell(2).value;
-          let situation = worksheet.getRow(3).getCell(2).value;
           let colCount = worksheet.columnCount;
-          let row1 = worksheet.getRow(7);
+          let row1 = worksheet.getRow(21);
           
-          for(let i = 8; i <= worksheet.rowCount; i ++) {
+          for(let i = 22; i <= worksheet.rowCount; i ++) {
             let row = worksheet.getRow(i);
             
             for (let j = 3; j <= colCount; j ++) {
-              let prompt = row1.getCell(j).value.replace('{Role}', role);
-              prompt = prompt.replace('{Situation}', situation);
-              prompt = prompt.replace('{B}', '{' + row.getCell(2).value + '}'); 
-              console.log(prompt);
+              let prompt = row1.getCell(j).value;
+              prompt = replaceCells(worksheet, row, roles, prompt);
     
               let response = {
                 status: 0
@@ -370,6 +386,7 @@ router.post('/project', (req, res) => {
             
               while(response.status !== 200) {
                 console.log('sending prompt...............');
+                console.log(prompt);
                 
                 try {
                   response = await openai.createCompletion({
@@ -398,13 +415,13 @@ router.post('/project', (req, res) => {
         } 
         else if(type === 'If, Then') {
           let colCount = worksheet.columnCount;
-          let row1 = worksheet.getRow(2);
+          let row1 = worksheet.getRow(21);
           
-          for(let i = 3; i <= worksheet.rowCount; i ++) {
+          for(let i = 22; i <= worksheet.rowCount; i ++) {
             let row = worksheet.getRow(i);
     
-            let prompt = row1.getCell(3).value.replace('{B}', '{' + row.getCell(2).value + '}');
-            console.log(prompt);
+            let prompt = row1.getCell(3).value;
+            prompt = replaceCells(worksheet, row, roles, prompt);
     
             let response = {
               status: 0
@@ -412,6 +429,7 @@ router.post('/project', (req, res) => {
             
             while(response.status !== 200) {
               console.log('sending prompt...............');
+              console.log(prompt);
               
               try {
                 response = await openai.createCompletion({
@@ -440,7 +458,7 @@ router.post('/project', (req, res) => {
             else if(score < 8) prompt = row1.getCell(5).value;
             else prompt = row1.getCell(6).value;
     
-            prompt = prompt.replace('{B}', '{' + row.getCell(2).value + '}');
+            prompt = replaceCells(worksheet, row, roles, prompt);
             response = {
               status: 0
             };
@@ -472,6 +490,7 @@ router.post('/project', (req, res) => {
     
             prompt = response.data.choices[0].text.trim();
             console.log(prompt);
+            
             let res1 = prompt;
             if(score < 3) row.getCell(4).value = res1;
             else if(score < 8) row.getCell(5).value = res1;
@@ -508,7 +527,7 @@ router.post('/project', (req, res) => {
             score = getScore(response.data.choices[0].text.trim());
             row.getCell(7).value = score;
             prompt = score < 8 ? row1.getCell(8).value : row1.getCell(9).value;
-            prompt = prompt.replace('{G}', '{' + res1 + '}');
+            prompt = replaceCells(worksheet, row, roles, prompt);
             response = {
               status: 0
             };
@@ -557,6 +576,35 @@ router.post('/project', (req, res) => {
     res.status(500).send({error: 'Server Error'});
   }
 })
+
+
+
+const replaceCells = (sheet, row, roles, prompt) => {
+  let index;
+
+  //  {B}
+  while(index = prompt.match(/{[A-Z]}/)) {   
+    index = index[0];
+    prompt = prompt.replace(index, row.getCell(index.slice(1, -1)).value);
+  }
+
+  //  {B22}
+  while(index = prompt.match(/{[A-Z][0-9]+}/)) {
+    index = index[0];
+    prompt = prompt.replace(index, sheet.getCell(index.slice(1, -1)).value);
+  }
+
+  //  {Role}
+  while(index = prompt.match(/{[A-z]+}/)) {
+    index = index[0];
+    prompt = prompt.replace(index, roles[index.slice(1, -1)]);
+  }
+
+  return prompt;
+}
+
+
+
 
 const getScore = (answer) => {
   let first = answer.search(/[1-9]/);
