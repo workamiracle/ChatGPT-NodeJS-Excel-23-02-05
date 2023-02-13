@@ -18,7 +18,7 @@ const Project = ({projects, deleteProject, selectProject}) => {
     <table className="table table-info table-striped mt-4">
       <thead>
         <tr className="table-primary">
-          <th>Porject Name</th>
+          <th>Project Name</th>
           <th></th>
         </tr>
       </thead>
