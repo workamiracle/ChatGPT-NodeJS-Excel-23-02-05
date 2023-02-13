@@ -1,5 +1,5 @@
 # ChatGPT with Excel sheet
-Read prompts from Excel sheet and save the answer from the OpenAI into the sheet.
+Read prompts from Excel sheet and save the answers from the OpenAI into the sheet.
 
 ## Features 
 * Node.js for Backend
@@ -42,17 +42,33 @@ npm start
 3. Start the server alone
 ```
 cd server
-node index.js
+npm run server
 ```
 
 ## Server API
 1. Run Task
 ```
-Route: '/run/task
+Route: '/run/task'
+Request payload: {
+  doc: string (Path and name of Excel file),
+  sheet: string (Name of sheet),
+  type: string (One of ['Build', 'Fixed', 'If, Then'])
+}
+Response: Status: 200, { res: 'Finished' }
 ```
 2. Run Project
 ```
-Route: '/run/project
+Route: '/run/project'
+Request payload: {
+  doc: string (Path and name of Excel file),
+  tasks: array (Array of tasks)
+}
+Task: {
+  name: string (Name of task, not used),
+  sheet: string (Name of sheet),
+  type: string (Type of task, one of ['Build', 'Fixed', 'If, Then'])
+}
+Response: Status: 200, { res: 'Finished' }
 ```
 
 
