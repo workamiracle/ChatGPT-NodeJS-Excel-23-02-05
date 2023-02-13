@@ -1,22 +1,21 @@
-# Talkbot App
-A conversational AI app inspired by OpenAI's GPT-3 language model, built with Create React App.
+# ChatGPT with Excel sheet
+Read prompts from Excel sheet and save the answer from the OpenAI into the sheet.
 
 ## Features 
-* Natural language processing and understanding
-* Context-aware responses
-* Ability to converse on a variety of topics
-* React-based front-end for easy user interaction
-* Node.js back-end for communication with the OpenAI API
+* Node.js for Backend
+* React for Frontend
+* Exceljs for handling Excel sheets
+* Concurrently for run server and client at one command
 
 ## Requirements 
 * Node JS
-* npm
-* [OpenAI API Key](https://beta.openai.com/signup/) 
+* OpenAI API Key
+* IDE: Visual Studio Code
 
 ## Setup
-1. Clone the repository
+1. Install global dependencies
 ``` 
-git clone https://github.com/dhiant/react-chatGPT-clone.git 
+npm install 
 ```
 2. Install client dependencies
 ``` 
@@ -31,19 +30,22 @@ npm install
 4. Replace [your_openai_key] in 'server/.env' file with your OpenAI API key.
 
 ## Usage
-1. Start the client
+1. Start the server and client
+```
+npm run dev
+```
+2. Start the client alone
 ``` 
 cd client 
 npm start 
 ```
-2. Start the server
+3. Start the server alone
 ```
 cd server
 node index.js
 ```
 
-## Contribution 
-All contributions are welcome. Feel free to open an issue or create a pull request.
+## Server API
 
 
 
