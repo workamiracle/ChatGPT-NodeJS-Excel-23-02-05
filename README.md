@@ -27,7 +27,7 @@ npm install
 cd server 
 npm install 
 ``` 
-4. Replace [your_openai_key] in 'server/.env' file with your OpenAI API key.
+4. Replace [OPENAI_API_KEY] in 'server/.env' file with your OpenAI API key.
 
 ## Usage
 1. Start the server and client
