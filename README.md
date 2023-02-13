@@ -49,25 +49,30 @@ npm run server
 1. Run Task
 ```
 Route: '/run/task'
+
 Request payload: {
   doc: string (Path and name of Excel file),
   sheet: string (Name of sheet),
   type: string (One of ['Build', 'Fixed', 'If, Then'])
 }
+
 Response: Status: 200, { res: 'Finished' }
 ```
 2. Run Project
 ```
 Route: '/run/project'
+
 Request payload: {
   doc: string (Path and name of Excel file),
   tasks: array (Array of tasks)
 }
+
 Task: {
   name: string (Name of task, not used),
   sheet: string (Name of sheet),
   type: string (Type of task, one of ['Build', 'Fixed', 'If, Then'])
 }
+
 Response: Status: 200, { res: 'Finished' }
 ```
 
