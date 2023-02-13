@@ -46,7 +46,13 @@ node index.js
 ```
 
 ## Server API
-
-
+1. Run Task
+```
+Route: '/run/task
+```
+2. Run Project
+```
+Route: '/run/project
+```
 
 
