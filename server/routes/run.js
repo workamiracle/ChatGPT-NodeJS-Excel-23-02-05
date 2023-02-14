@@ -16,7 +16,7 @@ const openai = new OpenAIApi(configuration);
 router.post('/', async (req, res) => {
   const { message } = req.body;
   const response = await openai.createCompletion({
-    model: "text-davinci-003",
+    model: "text-chat-davinci-002-20230126",
     prompt: message,
     max_tokens: 3000,
     temperature: 0.3,
@@ -49,49 +49,52 @@ router.post('/task', (req, res) => {
         
         for(let i = 22; i <= worksheet.rowCount; i ++) {
           let row = worksheet.getRow(i);
+          let lastAnswer = '';
           
           for (let j = 3; j <= colCount; j ++) {
             let prompt = row1.getCell(j).value;
-            prompt = replaceCells(worksheet, row, roles, prompt);
+            
+            if(prompt !== null && row.getCell('B').value !== null) {
+              prompt = replaceCells(worksheet, row, roles, prompt);
 
-            let response = {
-              status: 0,
-              data: {
-                error: null
-              }
-            };
-          
-            while(response.data.error || response.status !== 200) {
-              console.log('sending prompt...............');
-              console.log(prompt + '\n');
+              let response = {
+                status: 0,
+                data: {
+                  error: null
+                }
+              };
+            
+              while(response.data.error || response.status !== 200) {
+                console.log('sending prompt...............');
+                console.log(prompt + '\n');
 
-              try {
-                response = await openai.createCompletion({
-                  model: "text-davinci-003",
-                  prompt,
-                  temperature: 0,
-                  max_tokens: 3000,
-                  top_p: 1,
-                  frequency_penalty: 0.5,
-                  presence_penalty: 0,
-                });
-              } catch (err) {
-                //workbook.xlsx.writeFile(doc);
-                console.log('Server Error');
-                continue;
-                //return res.status(500).json({error: 'Server Error'});
+                try {
+                  response = await openai.createCompletion({
+                    model: "text-davinci-003",
+                    prompt,
+                    temperature: 0,
+                    max_tokens: 3000,
+                    top_p: 1,
+                    frequency_penalty: 0.5,
+                    presence_penalty: 0,
+                  });
+                } catch (err) {
+                  //workbook.xlsx.writeFile(doc);
+                  console.log('Server Error');
+                  continue;
+                  //return res.status(500).json({error: 'Server Error'});
+                }
               }
+              console.log('result-----------------------------------------');
+              console.log(response.data.choices[0].text.trim() + '\n');
+
+              lastAnswer = response.data.choices[0].text.trim();
+              row.getCell(j).value = lastAnswer;        
             }
-            console.log('result-----------------------------------------');
-            console.log(response.data.choices[0].text.trim() + '\n');
-
-            row.getCell(j).value = response.data.choices[0].text.trim();          
           }
-          row.getCell(1).value = row.getCell(row.cellCount).value;
+          row.getCell(1).value = lastAnswer;
         }
-      } 
-
-      else if(type === 'Fixed') {
+      } else if(type === 'Fixed') {
         let colCount = worksheet.columnCount;
         let row1 = worksheet.getRow(21);
         
@@ -100,42 +103,44 @@ router.post('/task', (req, res) => {
           
           for (let j = 3; j <= colCount; j ++) {
             let prompt = row1.getCell(j).value;
-            prompt = replaceCells(worksheet, row, roles, prompt);
+            
+            if(prompt !== null && row.getCell('B').value !== null) {
+              prompt = replaceCells(worksheet, row, roles, prompt);
 
-            let response = {
-              status: 0
-            };
-          
-            while(response.status !== 200) {
-              console.log('sending prompt...............');
-              console.log(prompt);
+              let response = {
+                status: 0
+              };
+            
+              while(response.status !== 200) {
+                console.log('sending prompt...............');
+                console.log(prompt);
 
-              try {
-                response = await openai.createCompletion({
-                  model: "text-davinci-003",
-                  prompt,
-                  temperature: 0,
-                  max_tokens: 256,
-                  top_p: 1,
-                  frequency_penalty: 0.5,
-                  presence_penalty: 0,
-                });
-              } catch (error) {
-                //workbook.xlsx.writeFile(doc);
+                try {
+                  response = await openai.createCompletion({
+                    model: "text-davinci-003",
+                    prompt,
+                    temperature: 0,
+                    max_tokens: 256,
+                    top_p: 1,
+                    frequency_penalty: 0.5,
+                    presence_penalty: 0,
+                  });
+                } catch (error) {
+                  //workbook.xlsx.writeFile(doc);
 
-                console.log('Server Error');
-                continue;
-                ///return res.status(500).json({error: 'Server Error'});
+                  console.log('Server Error');
+                  continue;
+                  ///return res.status(500).json({error: 'Server Error'});
+                }
               }
-            }
-            console.log('done');
-            console.log(response.data.choices[0].text.trim());
+              console.log('done');
+              console.log(response.data.choices[0].text.trim());
 
-            row.getCell(j).value = response.data.choices[0].text.trim();          
+              row.getCell(j).value = response.data.choices[0].text.trim();         
+            }
           }
         }
-      } 
-      else if(type === 'If, Then') {
+      } else if(type === 'If, Then') {
         let colCount = worksheet.columnCount;
         let row0 = worksheet.getRow(20);
         let row1 = worksheet.getRow(21);
@@ -148,49 +153,13 @@ router.post('/task', (req, res) => {
           for(let j = 3; j <= colCount; j ++) {
             let question = row0.getCell(j).value;
 
-            if(question === 'Question') {
-              let prompt = row1.getCell(j).value;
-
-              prompt = replaceCells(worksheet, row, roles, prompt);
-              prompt = prompt + '{' + lastAnswer + '}';
-
-              let response = {
-                status: 0
-              };
-              
-              while(response.status !== 200) {
-                console.log('sending prompt...............');
-                console.log(prompt);
-    
-                try{
-                  response = await openai.createCompletion({
-                    model: "text-davinci-003",
-                    prompt,
-                    temperature: 0,
-                    max_tokens: 256,
-                    top_p: 1,
-                    frequency_penalty: 0.5,
-                    presence_penalty: 0,
-                  });
-                } catch (error) {
-    
-                  console.log('Server Error');
-                  continue;
-                }
-              }
-              console.log('done');
-              console.log(response.data.choices[0].text.trim());
-
-              score = getScore(response.data.choices[0].text.trim());
-              row.getCell(j).value = score;
-            } else if(question.match('<=')) {
-              let cret = +question[question.search(/[1-9]/)];
-
-              if(score <= cret) {
+            if(question !== null && lastAnswer !== null) {
+              if(question === 'Question') {
                 let prompt = row1.getCell(j).value;
+  
                 prompt = replaceCells(worksheet, row, roles, prompt);
                 prompt = prompt + '{' + lastAnswer + '}';
-
+  
                 let response = {
                   status: 0
                 };
@@ -217,47 +186,85 @@ router.post('/task', (req, res) => {
                 }
                 console.log('done');
                 console.log(response.data.choices[0].text.trim());
-
-                lastAnswer = response.data.choices[0].text.trim();
-                row.getCell(j).value = lastAnswer;
-              }
-            } else if(question.match('>')) {
-              let cret = +question[question.search(/[1-9]/)];
-
-              if(score > cret) {
-                let prompt = row1.getCell(j).value;
-                prompt = replaceCells(worksheet, row, roles, prompt);
-                prompt = prompt + '{' + lastAnswer + '}';
-
-                let response = {
-                  status: 0
-                };
-                
-                while(response.status !== 200) {
-                  console.log('sending prompt...............');
-                  console.log(prompt);
-      
-                  try{
-                    response = await openai.createCompletion({
-                      model: "text-davinci-003",
-                      prompt,
-                      temperature: 0,
-                      max_tokens: 256,
-                      top_p: 1,
-                      frequency_penalty: 0.5,
-                      presence_penalty: 0,
-                    });
-                  } catch (error) {
-      
-                    console.log('Server Error');
-                    continue;
+  
+                score = getScore(response.data.choices[0].text.trim());
+                row.getCell(j).value = score;
+              } else if(question.match('<=')) {
+                let cret = +question[question.search(/[1-9]/)];
+  
+                if(score <= cret) {
+                  let prompt = row1.getCell(j).value;
+                  prompt = replaceCells(worksheet, row, roles, prompt);
+                  prompt = prompt + '{' + lastAnswer + '}';
+  
+                  let response = {
+                    status: 0
+                  };
+                  
+                  while(response.status !== 200) {
+                    console.log('sending prompt...............');
+                    console.log(prompt);
+        
+                    try{
+                      response = await openai.createCompletion({
+                        model: "text-davinci-003",
+                        prompt,
+                        temperature: 0,
+                        max_tokens: 256,
+                        top_p: 1,
+                        frequency_penalty: 0.5,
+                        presence_penalty: 0,
+                      });
+                    } catch (error) {
+        
+                      console.log('Server Error');
+                      continue;
+                    }
                   }
+                  console.log('done');
+                  console.log(response.data.choices[0].text.trim());
+  
+                  lastAnswer = response.data.choices[0].text.trim();
+                  row.getCell(j).value = lastAnswer;
                 }
-                console.log('done');
-                console.log(response.data.choices[0].text.trim());
-
-                lastAnswer = response.data.choices[0].text.trim();
-                row.getCell(j).value = lastAnswer;
+              } else if(question.match('>')) {
+                let cret = +question[question.search(/[1-9]/)];
+  
+                if(score > cret) {
+                  let prompt = row1.getCell(j).value;
+                  prompt = replaceCells(worksheet, row, roles, prompt);
+                  prompt = prompt + '{' + lastAnswer + '}';
+  
+                  let response = {
+                    status: 0
+                  };
+                  
+                  while(response.status !== 200) {
+                    console.log('sending prompt...............');
+                    console.log(prompt);
+        
+                    try{
+                      response = await openai.createCompletion({
+                        model: "text-davinci-003",
+                        prompt,
+                        temperature: 0,
+                        max_tokens: 256,
+                        top_p: 1,
+                        frequency_penalty: 0.5,
+                        presence_penalty: 0,
+                      });
+                    } catch (error) {
+        
+                      console.log('Server Error');
+                      continue;
+                    }
+                  }
+                  console.log('done');
+                  console.log(response.data.choices[0].text.trim());
+  
+                  lastAnswer = response.data.choices[0].text.trim();
+                  row.getCell(j).value = lastAnswer;
+                }
               }
             }
           }
@@ -302,45 +309,50 @@ router.post('/project', (req, res) => {
           
           for(let i = 22; i <= worksheet.rowCount; i ++) {
             let row = worksheet.getRow(i);
+            let lastAnswer = '';
             
             for (let j = 3; j <= colCount; j ++) {
               let prompt = row1.getCell(j).value;
-              prompt = replaceCells(worksheet, row, roles, prompt);              
-    
-              let response = {
-                status: 0,
-                data: {
-                  error: null
+              
+              if(prompt !== null && row.getCell('B').value !== null) {
+                prompt = replaceCells(worksheet, row, roles, prompt);
+  
+                let response = {
+                  status: 0,
+                  data: {
+                    error: null
+                  }
+                };
+              
+                while(response.data.error || response.status !== 200) {
+                  console.log('sending prompt...............');
+                  console.log(prompt + '\n');
+  
+                  try {
+                    response = await openai.createCompletion({
+                      model: "text-davinci-003",
+                      prompt,
+                      temperature: 0,
+                      max_tokens: 3000,
+                      top_p: 1,
+                      frequency_penalty: 0.5,
+                      presence_penalty: 0,
+                    });
+                  } catch (err) {
+                    //workbook.xlsx.writeFile(doc);
+                    console.log('Server Error');
+                    continue;
+                    //return res.status(500).json({error: 'Server Error'});
+                  }
                 }
-              };
-            
-              while(response.data.error || response.status !== 200) {
-                console.log('sending prompt...............');
-                console.log(prompt);
-
-                try {
-                  response = await openai.createCompletion({
-                    model: "text-davinci-003",
-                    prompt,
-                    temperature: 0.7,
-                    max_tokens: 256,
-                    top_p: 1,
-                    frequency_penalty: 0,
-                    presence_penalty: 0,
-                  });
-                } catch (error) {
-                  //workbook.xlsx.writeFile(doc);
-                  console.log(error);
-                  continue;
-                  //return res.status(500).json({error: 'Server Error'});
-                }
+                console.log('result-----------------------------------------');
+                console.log(response.data.choices[0].text.trim() + '\n');
+  
+                lastAnswer = response.data.choices[0].text.trim();
+                row.getCell(j).value = lastAnswer;        
               }
-              console.log('done');
-              console.log(response.data.choices[0].text.trim());
-    
-              row.getCell(j).value = response.data.choices[0].text.trim();          
             }
-            row.getCell(1).value = row.getCell(row.cellCount).value;
+            row.getCell(1).value = lastAnswer;
           }
         } else if(type === 'Fixed') {
           let colCount = worksheet.columnCount;
@@ -351,38 +363,41 @@ router.post('/project', (req, res) => {
             
             for (let j = 3; j <= colCount; j ++) {
               let prompt = row1.getCell(j).value;
-              prompt = replaceCells(worksheet, row, roles, prompt);
-    
-              let response = {
-                status: 0
-              };
-            
-              while(response.status !== 200) {
-                console.log('sending prompt...............');
-                console.log(prompt);
-                
-                try {
-                  response = await openai.createCompletion({
-                    model: "text-davinci-003",
-                    prompt,
-                    temperature: 0,
-                    max_tokens: 256,
-                    top_p: 1,
-                    frequency_penalty: 0.5,
-                    presence_penalty: 0,
-                  });
-                } catch (error) {
-                  //workbook.xlsx.writeFile(doc);
-
-                  console.log(error);
-                  continue;
-                  //return res.status(500).json({error: 'Server Error'});
+              
+              if(prompt !== null && row.getCell('B').value !== null) {
+                prompt = replaceCells(worksheet, row, roles, prompt);
+  
+                let response = {
+                  status: 0
+                };
+              
+                while(response.status !== 200) {
+                  console.log('sending prompt...............');
+                  console.log(prompt);
+  
+                  try {
+                    response = await openai.createCompletion({
+                      model: "text-davinci-003",
+                      prompt,
+                      temperature: 0,
+                      max_tokens: 256,
+                      top_p: 1,
+                      frequency_penalty: 0.5,
+                      presence_penalty: 0,
+                    });
+                  } catch (error) {
+                    //workbook.xlsx.writeFile(doc);
+  
+                    console.log('Server Error');
+                    continue;
+                    ///return res.status(500).json({error: 'Server Error'});
+                  }
                 }
+                console.log('done');
+                console.log(response.data.choices[0].text.trim());
+  
+                row.getCell(j).value = response.data.choices[0].text.trim();         
               }
-              console.log('done');
-              console.log(response.data.choices[0].text.trim());
-    
-              row.getCell(j).value = response.data.choices[0].text.trim();          
             }
           }
         } else if(type === 'If, Then') {
@@ -394,53 +409,17 @@ router.post('/project', (req, res) => {
             let row = worksheet.getRow(i);
             let lastAnswer = row.getCell('B').value;
             let score = -1;
-
+  
             for(let j = 3; j <= colCount; j ++) {
               let question = row0.getCell(j).value;
-
-              if(question === 'Question') {
-                let prompt = row1.getCell(j).value;
-
-                replaceCells(worksheet, row, roles, prompt);
-                prompt = prompt + '{' + lastAnswer + '}';
-
-                let response = {
-                  status: 0
-                };
-                
-                while(response.status !== 200) {
-                  console.log('sending prompt...............');
-                  console.log(prompt);
-      
-                  try{
-                    response = await openai.createCompletion({
-                      model: "text-davinci-003",
-                      prompt,
-                      temperature: 0,
-                      max_tokens: 256,
-                      top_p: 1,
-                      frequency_penalty: 0.5,
-                      presence_penalty: 0,
-                    });
-                  } catch (error) {
-      
-                    console.log('Server Error');
-                    continue;
-                  }
-                }
-                console.log('done');
-                console.log(response.data.choices[0].text.trim());
-
-                score = getScore(response.data.choices[0].text.trim());
-                row.getCell(j).value = score;
-              } else if(question.match('<=')) {
-                let cret = +question[question.search(/[1-9]/)];
-
-                if(score <= cret) {
+  
+              if(question !== null && lastAnswer !== null) {
+                if(question === 'Question') {
                   let prompt = row1.getCell(j).value;
+    
                   prompt = replaceCells(worksheet, row, roles, prompt);
                   prompt = prompt + '{' + lastAnswer + '}';
-
+    
                   let response = {
                     status: 0
                   };
@@ -467,54 +446,92 @@ router.post('/project', (req, res) => {
                   }
                   console.log('done');
                   console.log(response.data.choices[0].text.trim());
-
-                  lastAnswer = response.data.choices[0].text.trim();
-                  row.getCell(j).value = lastAnswer;
-                }
-              } else if(question.match('>')) {
-                let cret = +question[question.search(/[1-9]/)];
-
-                if(score > cret) {
-                  let prompt = row1.getCell(j).value;
-                  prompt = replaceCells(worksheet, row, roles, prompt);
-                  prompt = prompt + '{' + lastAnswer + '}';
-
-                  let response = {
-                    status: 0
-                  };
-                  
-                  while(response.status !== 200) {
-                    console.log('sending prompt...............');
-                    console.log(prompt);
-        
-                    try{
-                      response = await openai.createCompletion({
-                        model: "text-davinci-003",
-                        prompt,
-                        temperature: 0,
-                        max_tokens: 256,
-                        top_p: 1,
-                        frequency_penalty: 0.5,
-                        presence_penalty: 0,
-                      });
-                    } catch (error) {
-        
-                      console.log('Server Error');
-                      continue;
+    
+                  score = getScore(response.data.choices[0].text.trim());
+                  row.getCell(j).value = score;
+                } else if(question.match('<=')) {
+                  let cret = +question[question.search(/[1-9]/)];
+    
+                  if(score <= cret) {
+                    let prompt = row1.getCell(j).value;
+                    prompt = replaceCells(worksheet, row, roles, prompt);
+                    prompt = prompt + '{' + lastAnswer + '}';
+    
+                    let response = {
+                      status: 0
+                    };
+                    
+                    while(response.status !== 200) {
+                      console.log('sending prompt...............');
+                      console.log(prompt);
+          
+                      try{
+                        response = await openai.createCompletion({
+                          model: "text-davinci-003",
+                          prompt,
+                          temperature: 0,
+                          max_tokens: 256,
+                          top_p: 1,
+                          frequency_penalty: 0.5,
+                          presence_penalty: 0,
+                        });
+                      } catch (error) {
+          
+                        console.log('Server Error');
+                        continue;
+                      }
                     }
+                    console.log('done');
+                    console.log(response.data.choices[0].text.trim());
+    
+                    lastAnswer = response.data.choices[0].text.trim();
+                    row.getCell(j).value = lastAnswer;
                   }
-                  console.log('done');
-                  console.log(response.data.choices[0].text.trim());
-
-                  lastAnswer = response.data.choices[0].text.trim();
-                  row.getCell(j).value = lastAnswer;
+                } else if(question.match('>')) {
+                  let cret = +question[question.search(/[1-9]/)];
+    
+                  if(score > cret) {
+                    let prompt = row1.getCell(j).value;
+                    prompt = replaceCells(worksheet, row, roles, prompt);
+                    prompt = prompt + '{' + lastAnswer + '}';
+    
+                    let response = {
+                      status: 0
+                    };
+                    
+                    while(response.status !== 200) {
+                      console.log('sending prompt...............');
+                      console.log(prompt);
+          
+                      try{
+                        response = await openai.createCompletion({
+                          model: "text-davinci-003",
+                          prompt,
+                          temperature: 0,
+                          max_tokens: 256,
+                          top_p: 1,
+                          frequency_penalty: 0.5,
+                          presence_penalty: 0,
+                        });
+                      } catch (error) {
+          
+                        console.log('Server Error');
+                        continue;
+                      }
+                    }
+                    console.log('done');
+                    console.log(response.data.choices[0].text.trim());
+    
+                    lastAnswer = response.data.choices[0].text.trim();
+                    row.getCell(j).value = lastAnswer;
+                  }
                 }
               }
             }
             
             row.getCell('A').value = lastAnswer;
           }
-        } 
+        }
         
       };
 
