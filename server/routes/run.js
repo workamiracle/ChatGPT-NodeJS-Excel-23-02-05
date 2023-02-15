@@ -16,7 +16,7 @@ const openai = new OpenAIApi(configuration);
 router.post('/', async (req, res) => {
   const { message } = req.body;
   const response = await openai.createCompletion({
-    model: "text-chat-davinci-002-20230126",
+    model: "text-davinci-003",
     prompt: message,
     max_tokens: 3000,
     temperature: 0.3,

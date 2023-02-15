@@ -25,7 +25,7 @@ const Project = ({projects, deleteProject, selectProject}) => {
       <tbody>
         {projects.map((project, index) => (
           <tr key={index}>
-            <td onClick={() => onSelectProject(index)}>{project.name} ({project.doc})</td>
+            <td onClick={() => onSelectProject(index)}><Link> {project.name} ({project.doc}) </Link></td>
             <td>
               <button className="btn btn-danger btn-sm" onClick={() => deleteProject(index)}>Delete</button>
             </td>
