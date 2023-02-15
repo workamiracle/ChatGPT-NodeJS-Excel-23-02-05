@@ -54,7 +54,7 @@ router.post('/task', (req, res) => {
           for (let j = 3; j <= colCount; j ++) {
             let prompt = row1.getCell(j).value;
             
-            if(prompt !== null && row.getCell('B').value !== null) {
+            if(prompt !== null && row.getCell('B').value !== null && row.getCell(j).value === null) {
               prompt = replaceCells(worksheet, row, roles, prompt);
 
               let response = {
@@ -89,10 +89,18 @@ router.post('/task', (req, res) => {
               console.log(response.data.choices[0].text.trim() + '\n');
 
               lastAnswer = response.data.choices[0].text.trim();
-              row.getCell(j).value = lastAnswer;        
+              row.getCell(j).value = lastAnswer;    
+              row.getCell(j).font = {
+                name: 'Arial',
+                size: 16
+              };    
             }
           }
           row.getCell(1).value = lastAnswer;
+          row.getCell(1).font = {
+            name: 'Arial',
+            size: 16
+          };  
         }
       } else if(type === 'Fixed') {
         let colCount = worksheet.columnCount;
@@ -104,7 +112,7 @@ router.post('/task', (req, res) => {
           for (let j = 3; j <= colCount; j ++) {
             let prompt = row1.getCell(j).value;
             
-            if(prompt !== null && row.getCell('B').value !== null) {
+            if(prompt !== null && row.getCell('B').value !== null && row.getCell(j).value === null) {
               prompt = replaceCells(worksheet, row, roles, prompt);
 
               let response = {
@@ -136,7 +144,11 @@ router.post('/task', (req, res) => {
               console.log('done');
               console.log(response.data.choices[0].text.trim());
 
-              row.getCell(j).value = response.data.choices[0].text.trim();         
+              row.getCell(j).value = response.data.choices[0].text.trim();        
+              row.getCell(j).font = {
+                name: 'Arial',
+                size: 16
+              };   
             }
           }
         }
@@ -153,7 +165,7 @@ router.post('/task', (req, res) => {
           for(let j = 3; j <= colCount; j ++) {
             let question = row0.getCell(j).value;
 
-            if(question !== null && lastAnswer !== null) {
+            if(question !== null && lastAnswer !== null && row.getCell(j).value === null && score !== -1) {
               if(question === 'Question') {
                 let prompt = row1.getCell(j).value;
   
@@ -189,6 +201,10 @@ router.post('/task', (req, res) => {
   
                 score = getScore(response.data.choices[0].text.trim());
                 row.getCell(j).value = score;
+                row.getCell(j).font = {
+                  name: 'Arial',
+                  size: 16
+                };  
               } else if(question.match('<=')) {
                 let cret = +question[question.search(/[1-9]/)];
   
@@ -226,6 +242,10 @@ router.post('/task', (req, res) => {
   
                   lastAnswer = response.data.choices[0].text.trim();
                   row.getCell(j).value = lastAnswer;
+                  row.getCell(j).font = {
+                    name: 'Arial',
+                    size: 16
+                  };  
                 }
               } else if(question.match('>')) {
                 let cret = +question[question.search(/[1-9]/)];
@@ -264,12 +284,20 @@ router.post('/task', (req, res) => {
   
                   lastAnswer = response.data.choices[0].text.trim();
                   row.getCell(j).value = lastAnswer;
+                  row.getCell(j).font = {
+                    name: 'Arial',
+                    size: 16
+                  };  
                 }
               }
             }
           }
           
           row.getCell('A').value = lastAnswer;
+          row.getCell('A').font = {
+            name: 'Arial',
+            size: 16
+          };  
         }
       } 
       workbook.xlsx.writeFile(doc);
@@ -314,7 +342,7 @@ router.post('/project', (req, res) => {
             for (let j = 3; j <= colCount; j ++) {
               let prompt = row1.getCell(j).value;
               
-              if(prompt !== null && row.getCell('B').value !== null) {
+              if(prompt !== null && row.getCell('B').value !== null && row.getCell(j).value === null) {
                 prompt = replaceCells(worksheet, row, roles, prompt);
   
                 let response = {
@@ -349,10 +377,18 @@ router.post('/project', (req, res) => {
                 console.log(response.data.choices[0].text.trim() + '\n');
   
                 lastAnswer = response.data.choices[0].text.trim();
-                row.getCell(j).value = lastAnswer;        
+                row.getCell(j).value = lastAnswer;      
+                row.getCell(j).font = {
+                  name: 'Arial',
+                  size: 16
+                };    
               }
             }
             row.getCell(1).value = lastAnswer;
+            row.getCell(1).font = {
+              name: 'Arial',
+              size: 16
+            };  
           }
         } else if(type === 'Fixed') {
           let colCount = worksheet.columnCount;
@@ -364,7 +400,7 @@ router.post('/project', (req, res) => {
             for (let j = 3; j <= colCount; j ++) {
               let prompt = row1.getCell(j).value;
               
-              if(prompt !== null && row.getCell('B').value !== null) {
+              if(prompt !== null && row.getCell('B').value !== null && row.getCell(j).value === null) {
                 prompt = replaceCells(worksheet, row, roles, prompt);
   
                 let response = {
@@ -397,6 +433,10 @@ router.post('/project', (req, res) => {
                 console.log(response.data.choices[0].text.trim());
   
                 row.getCell(j).value = response.data.choices[0].text.trim();         
+                row.getCell(j).font = {
+                  name: 'Arial',
+                  size: 16
+                };  
               }
             }
           }
@@ -413,7 +453,7 @@ router.post('/project', (req, res) => {
             for(let j = 3; j <= colCount; j ++) {
               let question = row0.getCell(j).value;
   
-              if(question !== null && lastAnswer !== null) {
+              if(question !== null && lastAnswer !== null && row.getCell(j).value === null && score !== -1) {
                 if(question === 'Question') {
                   let prompt = row1.getCell(j).value;
     
@@ -449,6 +489,10 @@ router.post('/project', (req, res) => {
     
                   score = getScore(response.data.choices[0].text.trim());
                   row.getCell(j).value = score;
+                  row.getCell(j).font = {
+                    name: 'Arial',
+                    size: 16
+                  };  
                 } else if(question.match('<=')) {
                   let cret = +question[question.search(/[1-9]/)];
     
@@ -486,6 +530,10 @@ router.post('/project', (req, res) => {
     
                     lastAnswer = response.data.choices[0].text.trim();
                     row.getCell(j).value = lastAnswer;
+                    row.getCell(j).font = {
+                      name: 'Arial',
+                      size: 16
+                    };  
                   }
                 } else if(question.match('>')) {
                   let cret = +question[question.search(/[1-9]/)];
@@ -524,12 +572,20 @@ router.post('/project', (req, res) => {
     
                     lastAnswer = response.data.choices[0].text.trim();
                     row.getCell(j).value = lastAnswer;
+                    row.getCell(j).font = {
+                      name: 'Arial',
+                      size: 16
+                    };  
                   }
                 }
               }
             }
             
             row.getCell('A').value = lastAnswer;
+            row.getCell('A').font = {
+              name: 'Arial',
+              size: 16
+            };  
           }
         }
         
