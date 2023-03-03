@@ -6,6 +6,7 @@ const Excel = require('exceljs');
 const { Configuration, OpenAIApi } = require("openai");
 
 const configuration = new Configuration({
+  organization: 'org-NjoJRKC7NSbtkJKQuiCsdcbf',
   apiKey: process.env.OPENAI_API_KEY,
 });
 
@@ -15,9 +16,12 @@ const openai = new OpenAIApi(configuration);
 
 router.post('/', async (req, res) => {
   const { message } = req.body;
-  const response = await openai.createCompletion({
-    model: "text-davinci-003",
-    prompt: message,
+  const response = await openai.ChatCompletion.create({
+    model: "gpt-3.5-turbo",
+    message: [
+      {"role": "system", "content": "You are a creative writer."},
+      {"role": "user", "content": "Who won the world series in 2020?"}
+    ],
     max_tokens: 3000,
     temperature: 0.3,
   });
@@ -69,26 +73,30 @@ router.post('/task', (req, res) => {
                 console.log(prompt + '\n');
 
                 try {
-                  response = await openai.createCompletion({
-                    model: "text-davinci-003",
-                    prompt,
+                  response = await openai.createChatCompletion({
+                    model: "gpt-3.5-turbo",
+                    messages: [
+                      {role: "system", content: roles['SystemRole']},
+                      {role: "user", content: prompt}
+                    ],
                     temperature: 0,
-                    max_tokens: 3000,
+                    max_tokens: 2000,
                     top_p: 1,
                     frequency_penalty: 0.5,
                     presence_penalty: 0,
                   });
                 } catch (err) {
                   //workbook.xlsx.writeFile(doc);
-                  console.log('Server Error');
+                  console.log(err);
                   continue;
                   //return res.status(500).json({error: 'Server Error'});
                 }
               }
-              console.log('result-----------------------------------------');
-              console.log(response.data.choices[0].text.trim() + '\n');
+              lastAnswer = response.data.choices[0].message.content.trim();
 
-              lastAnswer = response.data.choices[0].text.trim();
+              console.log('result-----------------------------------------');
+              console.log(lastAnswer + '\n');
+              
               row.getCell(j).value = lastAnswer;    
               row.getCell(j).font = {
                 name: 'Arial',
@@ -124,11 +132,14 @@ router.post('/task', (req, res) => {
                 console.log(prompt);
 
                 try {
-                  response = await openai.createCompletion({
-                    model: "text-davinci-003",
-                    prompt,
+                  response = await openai.createChatCompletion({
+                    model: "gpt-3.5-turbo",
+                    messages: [
+                      {role: "system", content: roles['SystemRole']},
+                      {role: "user", content: prompt}
+                    ],
                     temperature: 0,
-                    max_tokens: 256,
+                    max_tokens: 2000,
                     top_p: 1,
                     frequency_penalty: 0.5,
                     presence_penalty: 0,
@@ -141,14 +152,17 @@ router.post('/task', (req, res) => {
                   ///return res.status(500).json({error: 'Server Error'});
                 }
               }
-              console.log('done');
-              console.log(response.data.choices[0].text.trim());
-
-              row.getCell(j).value = response.data.choices[0].text.trim();        
+              
+              row.getCell(j).value = response.data.choices[0].message.content.trim();
               row.getCell(j).font = {
                 name: 'Arial',
                 size: 16
-              };   
+              };
+
+              console.log('done');
+              console.log(row.getCell(j).value);
+
+                 
             }
           }
         }
@@ -165,7 +179,7 @@ router.post('/task', (req, res) => {
           for(let j = 3; j <= colCount; j ++) {
             let question = row0.getCell(j).value;
 
-            if(question !== null && lastAnswer !== null && row.getCell(j).value === null && score !== -1) {
+            if(question !== null && lastAnswer !== null && row.getCell(j).value === null) {
               if(question === 'Question') {
                 let prompt = row1.getCell(j).value;
   
@@ -357,11 +371,14 @@ router.post('/project', (req, res) => {
                   console.log(prompt + '\n');
   
                   try {
-                    response = await openai.createCompletion({
-                      model: "text-davinci-003",
-                      prompt,
+                    response = await openai.createChatCompletion({
+                      model: "gpt-3.5-turbo",
+                      messages: [
+                        {role: "system", content: roles['SystemRole']},
+                        {role: "user", content: prompt}
+                      ],
                       temperature: 0,
-                      max_tokens: 3000,
+                      max_tokens: 2000,
                       top_p: 1,
                       frequency_penalty: 0.5,
                       presence_penalty: 0,
@@ -374,9 +391,9 @@ router.post('/project', (req, res) => {
                   }
                 }
                 console.log('result-----------------------------------------');
-                console.log(response.data.choices[0].text.trim() + '\n');
+                console.log(response.data.choices[0].message.content.trim() + '\n');
   
-                lastAnswer = response.data.choices[0].text.trim();
+                lastAnswer = response.data.choices[0].message.content.trim();
                 row.getCell(j).value = lastAnswer;      
                 row.getCell(j).font = {
                   name: 'Arial',
@@ -412,11 +429,14 @@ router.post('/project', (req, res) => {
                   console.log(prompt);
   
                   try {
-                    response = await openai.createCompletion({
-                      model: "text-davinci-003",
-                      prompt,
+                    response = await openai.createChatCompletion({
+                      model: "gpt-3.5-turbo",
+                      messages: [
+                        {role: "system", content: roles['SystemRole']},
+                        {role: "user", content: prompt}
+                      ],
                       temperature: 0,
-                      max_tokens: 256,
+                      max_tokens: 2000,
                       top_p: 1,
                       frequency_penalty: 0.5,
                       presence_penalty: 0,
@@ -430,9 +450,9 @@ router.post('/project', (req, res) => {
                   }
                 }
                 console.log('done');
-                console.log(response.data.choices[0].text.trim());
+                console.log(response.data.choices[0].message.content.trim());
   
-                row.getCell(j).value = response.data.choices[0].text.trim();         
+                row.getCell(j).value = response.data.choices[0].message.content.trim();         
                 row.getCell(j).font = {
                   name: 'Arial',
                   size: 16
@@ -453,7 +473,7 @@ router.post('/project', (req, res) => {
             for(let j = 3; j <= colCount; j ++) {
               let question = row0.getCell(j).value;
   
-              if(question !== null && lastAnswer !== null && row.getCell(j).value === null && score !== -1) {
+              if(question !== null && lastAnswer !== null && row.getCell(j).value === null) {
                 if(question === 'Question') {
                   let prompt = row1.getCell(j).value;
     
