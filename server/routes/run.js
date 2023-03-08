@@ -562,6 +562,9 @@ router.post('/project', (req, res) => {
           if(worksheet.getCell('A' + i).value) {
             roles[worksheet.getCell('A' + i).value] = worksheet.getCell('B' + i).value;
           }
+          if(worksheet.getCell('D' + i).value) {
+          roles[worksheet.getCell('D' + i).value] = worksheet.getCell('E' + i).value;
+        }
         }
 
         if(type === 'Build') {
