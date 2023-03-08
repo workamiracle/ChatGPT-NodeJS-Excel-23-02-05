@@ -53,7 +53,7 @@ Route: '/run/task'
 Request payload: {
   doc: string (Path and name of Excel file),
   sheet: string (Name of sheet),
-  type: string (One of ['Build', 'Fixed', 'If, Then'])
+  type: string (One of ['Build', 'Fixed', 'If, Then', 'Combo'])
 }
 
 Response: Status: 200, { res: 'Finished' }
@@ -70,7 +70,7 @@ Request payload: {
 Task: {
   name: string (Name of task, not used),
   sheet: string (Name of sheet),
-  type: string (Type of task, one of ['Build', 'Fixed', 'If, Then'])
+  type: string (Type of task, one of ['Build', 'Fixed', 'If, Then', 'Combo'])
 }
 
 Response: Status: 200, { res: 'Finished' }
