@@ -321,12 +321,13 @@ router.post('/task', (req, res) => {
         let colCount = worksheet.columnCount;
         let row0 = null, row1 = null;
 
-        for(let i = 21; i < worksheet.rowCount; i ++) {
+        for(let i = 21; i <= worksheet.rowCount; i ++) {
           let row = worksheet.getRow(i);
           let lastAnswer = '';
 
           if(row.getCell('D').value === 'Build') {
             subtype = 'Build';
+            i += 1;
             row1 = worksheet.getRow(i);
           } else if(row.getCell('D').value === 'If, Then') {
             subtype = 'If, Then';
@@ -338,8 +339,8 @@ router.post('/task', (req, res) => {
               for (let j = 6; j <= colCount; j ++) {
                 let prompt = row1.getCell(j).value;
             
-                if(prompt !== null && row.getCell('E').value !== null && row.getCell(j).value === null) {
-                  prompt = replaceCells(worksheet, row, roles, prompt);
+                if(prompt !== null && row.getCell('E').value !== null && row.getCell(j).value === null && row.getCell(j).formula === undefined) {
+                prompt = replaceCells(worksheet, row, roles, prompt);
 
                   let response = {
                     status: 0,
@@ -834,12 +835,13 @@ router.post('/project', (req, res) => {
           let colCount = worksheet.columnCount;
           let row0 = null, row1 = null;
   
-          for(let i = 21; i < worksheet.rowCount; i ++) {
+          for(let i = 21; i <= worksheet.rowCount; i ++) {
             let row = worksheet.getRow(i);
             let lastAnswer = '';
   
             if(row.getCell('D').value === 'Build') {
               subtype = 'Build';
+              i += 1;
               row1 = worksheet.getRow(i);
             } else if(row.getCell('D').value === 'If, Then') {
               subtype = 'If, Then';
@@ -851,7 +853,7 @@ router.post('/project', (req, res) => {
                 for (let j = 6; j <= colCount; j ++) {
                   let prompt = row1.getCell(j).value;
               
-                  if(prompt !== null && row.getCell('E').value !== null && row.getCell(j).value === null) {
+                  if(prompt !== null && row.getCell('E').value !== null && row.getCell(j).value === null && row.getCell(j).formula === undefined) {
                     prompt = replaceCells(worksheet, row, roles, prompt);
   
                     let response = {
@@ -909,7 +911,7 @@ router.post('/project', (req, res) => {
                 for(let j = 6; j <= colCount; j ++) {
                   let question = row0.getCell(j).value;
   
-                  if(question !== null && lastAnswer !== null && row.getCell(j).value === null && score !== -1) {
+                  if(question !== null && lastAnswer !== null && row.getCell(j).value === null && score !== -1 && row.getCell(j).formula === undefined) {
                     if(question === 'Question') {
                       let prompt = row1.getCell(j).value;
         
