@@ -47,6 +47,7 @@ const CreateTask = ({addTask, project}) => {
             <option value="Build">Build</option>
             <option value="Fixed">Fixed</option>
             <option value="If, Then">If/then</option>
+            <option value="Combo">Combo</option>
           </select>
           <br />
         </div>
